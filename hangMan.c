@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
+#include <stdbool.h>
+#define MAXSIZE 35
 /*
  *program uses two strings to track game. One stores the value fo the secret wor
  *the other string will store the current guessed word including _ _ .
@@ -11,14 +13,49 @@
  *
  */
 int printGallows(int);
+int getGuess(char*);
 
-int main (int argc, char* argv[]){
+int main (){//int argc, char* argv[]){
+	char* theSecret = {"nomnom"};
+	char theGuess[MAXSIZE];
+	int numGuess = 0;
+	while(true){
+		getGuess(theGuess);
+		if (*theGuess == *theSecret){
+			printf("you win in %d guesses\n", numGuess);
+			break;
+		}
+		numGuess++;
+		if (numGuess < 7) {
+			printGallows(numGuess);
+		} else{
+			printf("he died\n");
+			break;
+		}
+	}
 	// call openFile() if return == error --- exit with error message
-	if (argc >= 1){
+	/*if (argc >= 1){
 		int j = atoi(argv[1]);
 		printGallows(j);
 	}
+	*/
 	
+}
+
+int getGuess(char* userGuess){
+	printf("Enter a Guess:");
+	char temp[MAXSIZE];
+	fgets(temp,(MAXSIZE), stdin);
+	if(((int)strlen(temp)) == MAXSIZE-1){
+		int i = '0';
+		while((i = fgetc(stdin)) != EOF && i != '\n'){
+			//No body to loop
+		}
+		return 1;
+		//goto youSuckTryAgain 
+	}
+	strncpy(userGuess, temp, MAXSIZE);
+	return 0;
 }
 
 
