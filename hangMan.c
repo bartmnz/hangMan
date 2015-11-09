@@ -14,13 +14,20 @@
  */
 int printGallows(int);
 int getGuess(char*);
+int checkGuess(char*, char*, char*);
+
 
 int main (){//int argc, char* argv[]){
 	char* theSecret = {"nomnom"};
 	char theGuess[MAXSIZE];
-	int numGuess = 0;
+	char knownStr[MAXSIZE];
+	int numGuess = 0;	
+
 	while(true){
 		getGuess(theGuess);
+		// check guess regardless, need to modify to treat string and char different
+		checkGuess(theSecret, knownStr, theGuess);
+		printf("knownStr is %s\n", knownStr);
 		if (*theGuess == *theSecret){
 			printf("you win in %d guesses\n", numGuess);
 			break;
@@ -40,6 +47,16 @@ int main (){//int argc, char* argv[]){
 	}
 	*/
 	
+}
+
+int checkGuess(char* secretVal, char* knowVals, char* userGuess){
+	int temp = strlen(secretVal)-1;
+	for(; temp >=0; temp--){
+		if(secretVal[temp] == userGuess[0]){
+			knowVals[temp] = userGuess[0];
+		}
+	}
+	return 0;
 }
 
 int getGuess(char* userGuess){
