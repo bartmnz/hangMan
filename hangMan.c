@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 #define MAXSIZE 35
 /*
  *program uses two strings to track game. One stores the value fo the secret wor
@@ -148,4 +149,17 @@ int printGallows(int numGuess){// char* guessString){
                 break;
 	}
 	return 1;    
+}
+
+int getLine(FILE *theFile, char* keepLine ){
+	srand(time(NULL));
+	char tempLine[MAXSIZE];
+	int count = 0;
+	while (fgets(tempLine,MAXSIZE, theFile) != NULL){
+		count ++;
+		if ((rand() % count == 0)){
+			strcpy(keepLine, tempLine);
+		}
+	}
+	return 0;
 }
