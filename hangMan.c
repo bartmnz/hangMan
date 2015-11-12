@@ -19,6 +19,7 @@ int getGuess(char*);
 int checkGuess(char*, char*, char*);
 int setTo_(char*, int);
 int getLine(FILE*, char*);
+int getMisses(char*, int);
 int getFilePath(char*, char*);
 
 
@@ -51,7 +52,9 @@ int main (int argc, char* argv[]){
 		if(!check){
 			numGuess++;
 		}else if (check == 1){
-			printf("You win! You had %d misses\n", numGuess);
+			char misses[7];
+			getMisses(misses, numGuess);
+			printf("You win! You had %d %s.\n", numGuess, misses);
 			break;
 		}
 		if (numGuess < 7) {
@@ -106,6 +109,17 @@ int checkGuess(char* secretVal, char* knowVals, char* userGuess){
 			return 1;
 		}
 		return 2;
+	}
+	return 0;
+}
+
+int getMisses(char* inText, int num){
+	if( inText == NULL){
+		return 1;
+	}else if(num == 1){
+		strcpy(inText, "miss");
+	}else{
+		strcpy(inText, "misses");
 	}
 	return 0;
 }
