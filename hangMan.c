@@ -19,28 +19,24 @@ int getGuess(char*);
 int checkGuess(char*, char*, char*);
 int setTo_(char*, int);
 int getLine(FILE*, char*);
-int getFilePath(char*);
+int getFilePath(char*, char*);
 
 
-int main (){//int argc, char* argv[]){
+int main (int argc, char* argv[]){
 	char theSecret[MAXSIZE];
 	char theGuess[MAXSIZE];
 	char knownStr[MAXSIZE];
 	char filePath[MAXFILE];
 	int numGuess = 0;
 	FILE* filePointer = NULL;
-	/*char* homePath = getenv("HOME");
-	char filePath[MAXFILE];
-	strcpy(filePath,homePath);
-	strcat(filePath,"/words");
-	printf("filePath is %s\n", filePath);
-		
-	fiilePointer = fopen("/home/sbartholomew/words", "r");
-*/
-	getFilePath(filePath);
+	if(argc == 2){
+		getFilePath(filePath, argv[1]);
+	} else{
+		getFilePath(filePath, NULL);
+	}
 	filePointer = fopen(filePath, "r");
 	if (filePointer == NULL){
-		printf("ERROR: words file does not exist in home directory\n");
+		printf("ERROR: file does not exist in home directory\n");
 		exit(0);
 	}
 	getLine(filePointer, theSecret);
@@ -51,11 +47,10 @@ int main (){//int argc, char* argv[]){
 		printf("%d  %s: ",numGuess, knownStr);
 		getGuess(theGuess);
 		// check guess regardless, need to modify to treat string and char different
-		if(!checkGuess(theSecret, knownStr, theGuess)){
+		int check = checkGuess(theSecret, knownStr, theGuess);
+		if(!check){
 			numGuess++;
-		}
-
-		if (!strcmp(theGuess,theSecret) || !strcmp(knownStr, theSecret)){
+		}else if (check == 1){
 			printf("You win! You had %d misses\n", numGuess);
 			break;
 		}
@@ -68,33 +63,51 @@ int main (){//int argc, char* argv[]){
 		}
 	}
 	fclose(filePointer);
-
-
-
-
-
-	
-	
 }
 
-int getFilePath(char* filePath){
+int getFilePath(char* filePath, char* fileName){
 	char* homePath = getenv("HOME");
         strcpy(filePath,homePath);
-        strcat(filePath,"/words");
+        if(fileName == NULL){
+		strcat(filePath,"/words");
+	}else{
+		strcat(filePath, "/");
+		strcat(filePath, fileName);
+	}
         printf("filePath is %s\n", filePath);
        	return 0;
 }
 
 int checkGuess(char* secretVal, char* knowVals, char* userGuess){
-	int temp = strlen(secretVal)-1;
+	if(userGuess[0] == '\n'){
+		return 0;
+	}
+	int i = strlen(secretVal)-1;
+	int temp;
 	int count = 0;
-	for(; temp >=0; temp--){
+	if(!strcmp(secretVal, userGuess)){
+		printf("over here");
+		return 1;
+	}
+	for(temp = i; temp >=0; temp--){
 		if(secretVal[temp] == userGuess[0]){
 			knowVals[temp] = userGuess[0];
 			count++;
 		}
 	}
-	return count;
+	if(count>0){
+		for(temp = i-1; temp >=0; --temp){
+			if(knowVals[temp] != secretVal[temp]){
+				break;
+			}
+		}
+		printf("%d\n", temp);
+		if(temp == -1){
+			return 1;
+		}
+		return 2;
+	}
+	return 0;
 }
 
 int getGuess(char* userGuess){
@@ -125,13 +138,6 @@ int setTo_(char* unitializedStr, int sizeOfStr){
 	unitializedStr[i] = '\0';
 	return 0;
 }
-
-
-/*
- *Method to  open a file and choose a random line from the file as the word
- *takes parameter char* and copies chosen line to char* using strncpy 
- *if file DNE return error code
- */
 
 /*
  *print hangMan(numInvalidGuess, *currentGuessString)
@@ -200,12 +206,20 @@ int printGallows(int numGuess){// char* guessString){
 	return 1;    
 }
 
+
+/*
+ *Method to  open a file and choose a random line from the file as the word
+ *takes parameter char* and copies chosen line to char* using strncpy 
+ *if file DNE return error code
+ */
+
+
 int getLine(FILE *theFile, char* keepLine ){
 	srand(time(NULL));
 	char tempLine[MAXSIZE];
 	int count = 0;
 	if(theFile ==NULL){
-		printf("didn't open the file");
+		printf("ERROR: File does not exist!\n");
 		return 1;
 	}
 	while (fgets(tempLine, MAXSIZE, theFile) != NULL){
