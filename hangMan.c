@@ -16,12 +16,16 @@
 int printGallows(int);
 int getGuess(char*);
 int checkGuess(char*, char*, char*);
+int setTo_(char*, int);
 
 
 int main (){//int argc, char* argv[]){
-	char* theSecret = {"nomnom"};
+	char* theSecret = {"nomanom"};
 	char theGuess[MAXSIZE];
+	int size=(int)strlen(theSecret);
+	int wordLen = size < MAXSIZE ? size : MAXSIZE;
 	char knownStr[MAXSIZE];
+	setTo_(knownStr, wordLen);
 	int numGuess = 0;	
 
 	while(true){
@@ -76,6 +80,21 @@ int getGuess(char* userGuess){
 	return 0;
 }
 
+
+int setTo_(char* unitializedStr, int sizeOfStr){
+	printf("here");
+	if(unitializedStr == NULL){// || sizeOfStr == NULL){
+		return 1;
+	}
+	printf("didn't fail %d\n", sizeOfStr);
+	int i;
+	for(i = 0; i < sizeOfStr; i++){
+		printf("size is %d is is %d\n", sizeOfStr, i);
+		unitializedStr[i] = '_';
+	}
+	unitializedStr[i] = '\0';
+	return 0;
+}
 
 
 /*
@@ -152,11 +171,15 @@ int printGallows(int numGuess){// char* guessString){
 }
 
 int getLine(FILE *theFile, char* keepLine ){
+	// input verification -- make sure theFile is not NULL
 	srand(time(NULL));
 	char tempLine[MAXSIZE];
 	int count = 0;
-	while (fgets(tempLine,MAXSIZE, theFile) != NULL){
+	while (fgets(tempLine, MAXSIZE, theFile) != NULL){
+		// need to ensure that fgets cleared the line buffer
+		// nest all in if (strnlen(tempLine)<MAXSIZE) 
 		count ++;
+		// need to check and see if tempLine is a valid line.
 		if ((rand() % count == 0)){
 			strcpy(keepLine, tempLine);
 		}
