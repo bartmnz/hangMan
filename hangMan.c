@@ -85,6 +85,10 @@ int main (int argc, char* argv[]){
 	fclose(filePointer);
 	fclose(statsPointer);
 }
+/*Function gets the home environment filepath as a string. SStores it as filePath
+ * return = 1 if variables are NULL else 0
+ *
+ */
 
 int getFilePath(char* filePath, char* fileName){
 	if(!fileName || !filePath){
@@ -97,6 +101,15 @@ int getFilePath(char* filePath, char* fileName){
         printf("filePath is %s\n", filePath);
        	return 0;
 }
+
+/*function compares the value of userGuess to the secretVal. if userGuess is a char it is compared to each char 
+ * in secretVal, if it is a string it is compared as a string
+ * returns 0 = userGuess is  '\n' or no character matches found
+ * return = 1 userGuess == secretVal
+ * return > 1 number of matches found for userGuess[0]
+ *
+ *
+ */
 
 int checkGuess(char* secretVal, char* knowVals, char* userGuess){
 	if(userGuess[0] == '\n'){
@@ -131,6 +144,11 @@ int checkGuess(char* secretVal, char* knowVals, char* userGuess){
 	return 0;
 }
 
+/*Function gets user input up to MAXSIZE if input exceeds MAXSIZE return is 1
+ *returns 0 if successful guess is made.
+ *
+ */
+
 int getGuess(char* userGuess){
 	char temp[MAXSIZE];
 	fgets(temp,(MAXSIZE), stdin);
@@ -149,7 +167,10 @@ int getGuess(char* userGuess){
 	strncpy(userGuess, temp, MAXSIZE);
 	return 0;
 }
-
+/*initializes unitializedStr to '_' for sizeOfStr
+ *
+ *
+ */
 
 int setTo_(char* unitializedStr, int sizeOfStr){
 	if(unitializedStr == NULL){
@@ -265,7 +286,10 @@ int getLine(FILE *theFile, char* keepLine){
 	}
 	return 0;
 }
-
+/*sets keepLine == the last line in theFile
+ * returns 1 if theFile == NULL 
+ *
+ */
 
 int getStats(FILE *theFile, char* keepLine){
         char tempLine[MAXSIZE];
