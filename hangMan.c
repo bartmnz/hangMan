@@ -22,25 +22,46 @@ int setTo_(char*, int);
 int getLine(FILE*, char*);
 int getMisses(char*, int);
 int getFilePath(char*, char*);
-
+int getStats(FILE*, char*);
 
 int main (int argc, char* argv[]){
-	char theSecret[MAXSIZE];
-	char theGuess[MAXSIZE];
-	char knownStr[MAXSIZE];
-	char filePath[MAXFILE];
+	char theSecret[MAXSIZE], theGuess[MAXSIZE], knownStr[MAXSIZE], temp[MAXSIZE], filePath[MAXFILE], statsPath[MAXFILE], theStats[MAXFILE];
+	strcpy(temp, "words");
 	int numGuess = 0;
-	FILE* filePointer = NULL;
+	FILE *filePointer = NULL, *statsPointer = NULL;
 	if(argc == 2){
 		getFilePath(filePath, argv[1]);
 	} else{
-		getFilePath(filePath, NULL);
+		getFilePath(filePath, temp);
 	}
 	filePointer = fopen(filePath, "r");
-	if (filePointer == NULL){
-		printf("ERROR: file does not exist in home directory\n");
-		exit(0);
-	}
+///	if (filePointer == NULL){
+//		printf("ERROR: file does not exist in home directory\n");
+//		exit(0);
+//	}
+	int games, wins, losses;
+	float average;
+	strcpy(temp, ".hangman");
+	getFilePath(statsPath, temp);
+	statsPointer = fopen(statsPath, "a+");
+	getStats(statsPointer, theStats);
+	char* remainder;
+	games = strtol(theStats, &remainder,10);
+	strcpy(theStats, remainder);
+	wins = strtol(theStats, &remainder,10);
+	strcpy(theStats, remainder);
+	losses = games - wins;
+	average = strtof(theStats, &remainder);
+	char winString[5], losString[7];
+	wins == 1 ? strcpy(winString, "Win") : strcpy(winString, "Wins");
+	losses == 1 ? strcpy(losString, "Loss") : strcpy(losString, "Losses");
+	printf("Game %d  %s: %d %s: %d Average:%.1f\n", games, winString, wins, losString, losses, average); 
+// working here	
+	if (!filePointer || !statsPointer){
+                printf("ERROR: file does not exist in home directory\n");
+                exit(0);
+        }
+	
 	getLine(filePointer, theSecret);
 	int size=(int)strlen(theSecret)-1;
 	int wordLen = size < MAXSIZE ? size : MAXSIZE;
@@ -48,7 +69,7 @@ int main (int argc, char* argv[]){
 	while(true){
 		printf("%d  %s: ",numGuess, knownStr);
 		getGuess(theGuess);
-		// check guess regardless, need to modify to treat string and char different
+
 		int check = checkGuess(theSecret, knownStr, theGuess);
 		if(!check){
 			numGuess++;
@@ -57,28 +78,34 @@ int main (int argc, char* argv[]){
 			getMisses(misses, numGuess);
 			printf("   %s\n", theSecret);
 			printf("You win! You had %d %s.\n", numGuess, misses);
+			wins++;
+			games++;
+			average = (average*(games-1) + numGuess)/games;
 			break;
 		}
-		if (numGuess < 7) {
-			printGallows(numGuess);
-		} else{
+		printGallows(numGuess);
+		if( numGuess == 6){
 			printf("  %s\n", theSecret);
 			printf("You lose\n");
+			losses++;
+			games++;
+			average = (average*(games-1) + numGuess)/games;
 			break;
 		}
 	}
+	fprintf(statsPointer, "\n%d %d %f", games, wins, average);
 	fclose(filePointer);
+	fclose(statsPointer);
 }
 
 int getFilePath(char* filePath, char* fileName){
 	char* homePath = getenv("HOME");
         strcpy(filePath,homePath);
-        if(fileName == NULL){
-		strcat(filePath,"/words");
-	}else{
-		strcat(filePath, "/");
-		strcat(filePath, fileName);
+        if(!fileName || !filePath){
+		return 1;
 	}
+	strcat(filePath, "/");
+	strcat(filePath, fileName);
         printf("filePath is %s\n", filePath);
        	return 0;
 }
@@ -87,7 +114,6 @@ int checkGuess(char* secretVal, char* knowVals, char* userGuess){
 	if(userGuess[0] == '\n'){
 		return 0;
 	}
-	// set userguess to lower 
 	int i = strlen(secretVal)-1;
 	int temp;
 	int count = 0;
@@ -237,7 +263,7 @@ int printGallows(int numGuess){// char* guessString){
  */
 
 
-int getLine(FILE *theFile, char* keepLine ){
+int getLine(FILE *theFile, char* keepLine){
 	srand(time(NULL));
 	char tempLine[MAXSIZE];
 	int count = 0;
@@ -268,3 +294,19 @@ int getLine(FILE *theFile, char* keepLine ){
 	}
 	return 0;
 }
+
+
+int getStats(FILE *theFile, char* keepLine){
+        srand(time(NULL));
+        char tempLine[MAXSIZE];
+        if(theFile ==NULL){
+                printf("ERROR: File does not exist!\n");
+                return 1;
+        }
+        while (fgets(tempLine, MAXSIZE, theFile) != NULL){
+		strcpy(keepLine, tempLine);
+	}
+	return 0;
+}
+
+
