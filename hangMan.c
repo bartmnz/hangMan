@@ -94,10 +94,12 @@ int checkGuess(char* secretVal, char* knowVals, char* userGuess){
 	if(!strcmp(secretVal, userGuess)){
 		return 1;
 	}
-	for(temp = i; temp >=0; temp--){
-		if(secretVal[temp] == userGuess[0]){
-			knowVals[temp] = userGuess[0];
-			count++;
+	else if(strlen(userGuess) < 3){
+		for(temp = i; temp >=0; temp--){
+			if(secretVal[temp] == userGuess[0]){
+				knowVals[temp] = userGuess[0];
+				count++;
+			}
 		}
 	}
 	if(count>0){
