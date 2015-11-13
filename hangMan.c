@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <ctype.h>
 #define MAXSIZE 35
 #define MAXFILE 150
 /*
@@ -85,11 +86,11 @@ int checkGuess(char* secretVal, char* knowVals, char* userGuess){
 	if(userGuess[0] == '\n'){
 		return 0;
 	}
+	// set userguess to lower 
 	int i = strlen(secretVal)-1;
 	int temp;
 	int count = 0;
 	if(!strcmp(secretVal, userGuess)){
-		printf("over here");
 		return 1;
 	}
 	for(temp = i; temp >=0; temp--){
@@ -242,6 +243,11 @@ int getLine(FILE *theFile, char* keepLine ){
 		count ++;
 		// need to check and see if tempLine is a valid line.
 		if ((rand() % count == 0)){
+			int i = strlen(tempLine);
+			for(; i>= 0; i--){
+				tempLine[i] = tolower(tempLine[i]);
+			}
+			// tolower templine
 			strcpy(keepLine, tempLine);
 		}
 	}
