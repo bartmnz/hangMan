@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <ctype.h>
-#define MAXSIZE 35
+#define MAXSIZE 36
 #define MAXFILE 150
 /*
  *program uses two strings to track game. One stores the value fo the secret wor
@@ -55,6 +55,7 @@ int main (int argc, char* argv[]){
 		}else if (check == 1){
 			char misses[7];
 			getMisses(misses, numGuess);
+			printf("   %s\n", theSecret);
 			printf("You win! You had %d %s.\n", numGuess, misses);
 			break;
 		}
@@ -245,15 +246,22 @@ int getLine(FILE *theFile, char* keepLine ){
 	while (fgets(tempLine, MAXSIZE, theFile) != NULL){
 		// need to ensure that fgets cleared the line buffer
 		// nest all in if (strnlen(tempLine)<MAXSIZE) 
+		bool isValid = true;
 		count ++;
 		// need to check and see if tempLine is a valid line.
 		if ((rand() % count == 0)){
 			int i = strlen(tempLine);
 			for(; i>= 0; i--){
 				tempLine[i] = tolower(tempLine[i]);
+				if(tempLine[i] == ' '){
+					isValid = false;
+					count--;
+				}
 			}
 			// tolower templine
-			strcpy(keepLine, tempLine);
+			if(isValid){
+				strcpy(keepLine, tempLine);
+			}
 		}
 	}
 	return 0;
