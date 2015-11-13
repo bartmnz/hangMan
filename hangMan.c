@@ -137,6 +137,11 @@ int getGuess(char* userGuess){
 		return 1;
 		//goto youSuckTryAgain 
 	}
+	int i = strlen(temp);
+        for(; i>= 0; i--){
+        	temp[i] = tolower(temp[i]);
+	}
+
 	strncpy(userGuess, temp, MAXSIZE);
 	return 0;
 }
