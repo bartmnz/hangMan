@@ -20,7 +20,6 @@ int getGuess(char*);
 int checkGuess(char*, char*, char*);
 int setTo_(char*, int);
 int getLine(FILE*, char*);
-int getMisses(char*, int);
 int getFilePath(char*, char*);
 int getStats(FILE*, char*);
 
@@ -35,10 +34,6 @@ int main (int argc, char* argv[]){
 		getFilePath(filePath, temp);
 	}
 	filePointer = fopen(filePath, "r");
-///	if (filePointer == NULL){
-//		printf("ERROR: file does not exist in home directory\n");
-//		exit(0);
-//	}
 	int games, wins, losses;
 	float average;
 	strcpy(temp, ".hangman");
@@ -56,12 +51,10 @@ int main (int argc, char* argv[]){
 	wins == 1 ? strcpy(winString, "Win") : strcpy(winString, "Wins");
 	losses == 1 ? strcpy(losString, "Loss") : strcpy(losString, "Losses");
 	printf("Game %d  %s: %d %s: %d Average:%.1f\n", games, winString, wins, losString, losses, average); 
-// working here	
 	if (!filePointer || !statsPointer){
                 printf("ERROR: file does not exist in home directory\n");
                 exit(0);
         }
-	
 	getLine(filePointer, theSecret);
 	int size=(int)strlen(theSecret)-1;
 	int wordLen = size < MAXSIZE ? size : MAXSIZE;
@@ -75,7 +68,7 @@ int main (int argc, char* argv[]){
 			numGuess++;
 		}else if (check == 1){
 			char misses[7];
-			getMisses(misses, numGuess);
+			numGuess == 1 ? strcpy(misses, "miss") : strcpy(misses, "misses");
 			printf("   %s\n", theSecret);
 			printf("You win! You had %d %s.\n", numGuess, misses);
 			wins++;
@@ -143,17 +136,6 @@ int checkGuess(char* secretVal, char* knowVals, char* userGuess){
 	return 0;
 }
 
-int getMisses(char* inText, int num){
-	if( inText == NULL){
-		return 1;
-	}else if(num == 1){
-		strcpy(inText, "miss");
-	}else{
-		strcpy(inText, "misses");
-	}
-	return 0;
-}
-
 int getGuess(char* userGuess){
 	//printf("Enter a Guess:");
 	char temp[MAXSIZE];
@@ -193,7 +175,7 @@ int setTo_(char* unitializedStr, int sizeOfStr){
  *big series of case statements and ascii art to "draw" the hangman.
  *
  */
-int printGallows(int numGuess){// char* guessString){
+int printGallows(int numGuess){
 	switch(numGuess){
 		case 0: 
 		        printf(" ___________\n");
@@ -272,11 +254,8 @@ int getLine(FILE *theFile, char* keepLine){
 		return 1;
 	}
 	while (fgets(tempLine, MAXSIZE, theFile) != NULL){
-		// need to ensure that fgets cleared the line buffer
-		// nest all in if (strnlen(tempLine)<MAXSIZE) 
 		bool isValid = true;
 		count ++;
-		// need to check and see if tempLine is a valid line.
 		if ((rand() % count == 0)){
 			int i = strlen(tempLine);
 			for(; i>= 0; i--){
@@ -286,7 +265,6 @@ int getLine(FILE *theFile, char* keepLine){
 					count--;
 				}
 			}
-			// tolower templine
 			if(isValid){
 				strcpy(keepLine, tempLine);
 			}
@@ -297,7 +275,6 @@ int getLine(FILE *theFile, char* keepLine){
 
 
 int getStats(FILE *theFile, char* keepLine){
-        srand(time(NULL));
         char tempLine[MAXSIZE];
         if(theFile ==NULL){
                 printf("ERROR: File does not exist!\n");
