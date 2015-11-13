@@ -24,20 +24,15 @@ int getFilePath(char*, char*);
 int getStats(FILE*, char*);
 
 int main (int argc, char* argv[]){
-	char theSecret[MAXSIZE], theGuess[MAXSIZE], knownStr[MAXSIZE], temp[MAXSIZE], filePath[MAXFILE], statsPath[MAXFILE], theStats[MAXFILE];
-	strcpy(temp, "words");
+	char theSecret[MAXSIZE], theGuess[MAXSIZE], knownStr[MAXSIZE], filePath[MAXFILE], statsPath[MAXFILE], theStats[MAXFILE];
+
 	int numGuess = 0;
 	FILE *filePointer = NULL, *statsPointer = NULL;
-	if(argc == 2){
-		getFilePath(filePath, argv[1]);
-	} else{
-		getFilePath(filePath, temp);
-	}
+	getFilePath(filePath, argc == 2 ? argv[1] : "words");
 	filePointer = fopen(filePath, "r");
 	int games, wins, losses;
 	float average;
-	strcpy(temp, ".hangman");
-	getFilePath(statsPath, temp);
+	getFilePath(statsPath, ".hangman");
 	statsPointer = fopen(statsPath, "a+");
 	getStats(statsPointer, theStats);
 	char* remainder;
@@ -61,8 +56,8 @@ int main (int argc, char* argv[]){
 	setTo_(knownStr, wordLen);
 	while(true){
 		printf("%d  %s: ",numGuess, knownStr);
-		getGuess(theGuess);
-
+		getGuess(theGuess);//{//no body to loop
+		//}
 		int check = checkGuess(theSecret, knownStr, theGuess);
 		if(!check){
 			numGuess++;
@@ -92,12 +87,12 @@ int main (int argc, char* argv[]){
 }
 
 int getFilePath(char* filePath, char* fileName){
+	if(!fileName || !filePath){
+                return 1;
+        }
 	char* homePath = getenv("HOME");
         strcpy(filePath,homePath);
-        if(!fileName || !filePath){
-		return 1;
-	}
-	strcat(filePath, "/");
+        strcat(filePath, "/");
 	strcat(filePath, fileName);
         printf("filePath is %s\n", filePath);
        	return 0;
@@ -137,7 +132,6 @@ int checkGuess(char* secretVal, char* knowVals, char* userGuess){
 }
 
 int getGuess(char* userGuess){
-	//printf("Enter a Guess:");
 	char temp[MAXSIZE];
 	fgets(temp,(MAXSIZE), stdin);
 	if(((int)strlen(temp)) == MAXSIZE-1){
@@ -146,7 +140,6 @@ int getGuess(char* userGuess){
 			//No body to loop
 		}
 		return 1;
-		//goto youSuckTryAgain 
 	}
 	int i = strlen(temp);
         for(; i>= 0; i--){
