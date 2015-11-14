@@ -28,7 +28,7 @@ int main (int argc, char* argv[]){
 
 	int numGuess = 0;
 	FILE *filePointer = NULL, *statsPointer = NULL;
-	getFilePath(filePath, argc == 2 ? argv[1] : "words");
+	getFilePath(filePath, argc == 2 ? argv[1] : ".words");
 	filePointer = fopen(filePath, "r");
 	int games, wins, losses;
 	float average;
